@@ -31,48 +31,25 @@ export default function Contact() {
     setErrorMessage("");
 
     try {
-      // 1. First attempt: Next.js API Route
-      const response = await fetch("/api/contact", {
+      // Direct Client-Side Submission to Web3Forms (Native Free Plan integration)
+      const formPayload = new FormData();
+      formPayload.append("access_key", "eba2f827-85ce-4ffd-9e58-aac34c9c536b");
+      formPayload.append("name", formData.name);
+      formPayload.append("email", formData.email);
+      formPayload.append("phone", formData.phone || "Not provided");
+      formPayload.append("project_type", formData.projectType);
+      formPayload.append("message", formData.message);
+      formPayload.append("from_name", `Studio Ayla Web (${formData.name})`);
+      formPayload.append("subject", `✨ New Studio Ayla Inquiry: ${formData.name} (${formData.projectType})`);
+
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: formPayload,
       });
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
-        setStatus("success");
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          projectType: "Residential",
-          message: "",
-        });
-        return;
-      }
-
-      // 2. Direct Web3Forms Fallback if API route encounters any environment issue
-      const directResponse = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: "eba2f827-85ce-4ffd-9e58-aac34c9c536b",
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || "Not provided",
-          project_type: formData.projectType,
-          message: formData.message,
-          subject: `✨ Studio Ayla Inquiry from ${formData.name}`,
-        }),
-      });
-
-      const directData = await directResponse.json();
-
-      if (directData.success) {
+      if (data.success) {
         setStatus("success");
         setFormData({
           name: "",
@@ -83,11 +60,11 @@ export default function Contact() {
         });
       } else {
         setStatus("error");
-        setErrorMessage(directData.message || data.error || "Failed to submit. Please try again.");
+        setErrorMessage(data.message || "Failed to submit inquiry. Please try again.");
       }
     } catch {
       setStatus("error");
-      setErrorMessage("Network error. Please try again or reach out directly to studioayladesign@gmail.com.");
+      setErrorMessage("Network error. Please try again or email studioayladesign@gmail.com directly.");
     }
   };
 
