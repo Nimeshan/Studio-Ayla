@@ -31,6 +31,7 @@ export default function Contact() {
     setErrorMessage("");
 
     try {
+      // 1. First attempt: Next.js API Route
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,13 +49,45 @@ export default function Contact() {
           projectType: "Residential",
           message: "",
         });
+        return;
+      }
+
+      // 2. Direct Web3Forms Fallback if API route encounters any environment issue
+      const directResponse = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "eba2f827-85ce-4ffd-9e58-aac34c9c536b",
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || "Not provided",
+          project_type: formData.projectType,
+          message: formData.message,
+          subject: `✨ Studio Ayla Inquiry from ${formData.name}`,
+        }),
+      });
+
+      const directData = await directResponse.json();
+
+      if (directData.success) {
+        setStatus("success");
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          projectType: "Residential",
+          message: "",
+        });
       } else {
         setStatus("error");
-        setErrorMessage(data.error || "Failed to submit. Please try again.");
+        setErrorMessage(directData.message || data.error || "Failed to submit. Please try again.");
       }
     } catch {
       setStatus("error");
-      setErrorMessage("Network error. Please try again or email directly.");
+      setErrorMessage("Network error. Please try again or reach out directly to studioayladesign@gmail.com.");
     }
   };
 

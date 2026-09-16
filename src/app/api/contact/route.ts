@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
+    const accessKey = process.env.WEB3FORMS_ACCESS_KEY || "eba2f827-85ce-4ffd-9e58-aac34c9c536b";
     const recipientEmail = "studioayladesign@gmail.com";
     let emailDispatched = false;
     let dispatchError: string | null = null;
