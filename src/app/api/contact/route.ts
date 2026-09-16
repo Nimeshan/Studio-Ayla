@@ -23,11 +23,13 @@ export async function POST(request: Request) {
       );
     }
 
+    const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
     const recipientEmail = "studioayladesign@gmail.com";
     let emailDispatched = false;
+    let dispatchError: string | null = null;
 
-    // METHOD 1: Web3Forms (Free API - 100% Free for Vercel)
-    if (process.env.WEB3FORMS_ACCESS_KEY) {
+    // METHOD 1: Web3Forms Dispatch
+    if (accessKey) {
       try {
         const web3Response = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
@@ -36,10 +38,9 @@ export async function POST(request: Request) {
             Accept: "application/json",
           },
           body: JSON.stringify({
-            access_key: process.env.WEB3FORMS_ACCESS_KEY,
-            subject: `New Studio Ayla Inquiry: ${name} (${projectType || "General"})`,
+            access_key: accessKey.trim(),
+            subject: `Studio Ayla Inquiry: ${name} — ${projectType || "General"}`,
             from_name: `Studio Ayla Web (${name})`,
-            to_email: recipientEmail,
             name: name,
             email: email,
             phone: phone || "Not provided",
@@ -49,18 +50,23 @@ export async function POST(request: Request) {
         });
 
         const web3Data = await web3Response.json();
-        if (web3Data.success) {
+        console.log("Web3Forms Response:", web3Data);
+
+        if (web3Response.ok && web3Data.success) {
           emailDispatched = true;
-          console.log("Email dispatched successfully via Web3Forms.");
         } else {
-          console.warn("Web3Forms submission notice:", web3Data);
+          dispatchError = web3Data.message || "Web3Forms submission failed";
+          console.error("Web3Forms API error:", web3Data);
         }
-      } catch (w3Err) {
-        console.error("Web3Forms dispatch error:", w3Err);
+      } catch (w3Err: unknown) {
+        dispatchError = w3Err instanceof Error ? w3Err.message : "Network error contacting email service";
+        console.error("Web3Forms network error:", w3Err);
       }
+    } else {
+      console.warn("Notice: WEB3FORMS_ACCESS_KEY environment variable is not defined in this deployment.");
     }
 
-    // METHOD 2: Gmail App Password via Nodemailer (100% Free with personal Gmail on Vercel)
+    // METHOD 2: Gmail App Password via Nodemailer (Fallback if configured)
     if (!emailDispatched && process.env.GMAIL_USER && process.env.GMAIL_APP_PASS) {
       try {
         const transporter = nodemailer.createTransport({
@@ -109,19 +115,15 @@ export async function POST(request: Request) {
       }
     }
 
-    // Always log receipt on server
-    console.log("Studio Ayla Inquiry Log:", {
-      name,
-      email,
-      phone: phone || "Not provided",
-      projectType: projectType || "Residential",
-      timestamp: new Date().toISOString(),
-      dispatched: emailDispatched,
-    });
+    // If both failed and were supposed to be configured, let the client know
+    if (!emailDispatched && !accessKey && !process.env.GMAIL_USER) {
+      console.warn("No email service is currently configured on this environment.");
+    }
 
     return NextResponse.json(
       {
         success: true,
+        dispatched: emailDispatched,
         message: "Thank you for reaching out to Studio Ayla. We will review your project brief and be in touch shortly.",
       },
       { status: 200 }
