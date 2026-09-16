@@ -84,16 +84,22 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Direct Email */}
+            {/* Direct Email & Phone */}
             <div className="md:col-span-3">
               <span className="text-[10px] uppercase tracking-[0.25em] text-[#8E8880] block mb-4 font-sans">
                 Inquiries
               </span>
               <a
                 href={`mailto:${studioBrand.email}`}
-                className="text-xs text-[#FAF8F5] hover:text-[#C5A880] transition-colors font-sans tracking-wide block"
+                className="text-xs text-[#FAF8F5] hover:text-[#C5A880] transition-colors font-sans tracking-wide block mb-1.5"
               >
                 {studioBrand.email}
+              </a>
+              <a
+                href={`tel:+94777981560`}
+                className="text-xs text-[#C2BCB3] hover:text-[#C5A880] transition-colors font-sans tracking-wide block"
+              >
+                {studioBrand.phone}
               </a>
             </div>
 

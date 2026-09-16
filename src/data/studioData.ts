@@ -46,6 +46,7 @@ export const studioBrand = {
   tagline: "Interiors that reflect you.",
   supportingLine: "Personalised interiors and custom lighting designed around you.",
   email: "studioayladesign@gmail.com",
+  phone: "+94 77 798 1560",
   instagram: "https://instagram.com",
   facebook: "https://facebook.com",
   pinterest: "https://pinterest.com",

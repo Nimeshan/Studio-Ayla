@@ -239,14 +239,16 @@ export default function Navbar() {
           <div className="pt-6 border-t border-white/10 space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-[#8E8880]">
               <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-[#C5A880]" />
-                <a href={`mailto:${studioBrand.email}`} className="hover:text-white transition-colors">
+                <Mail className="w-4 h-4 text-[#C5A880] shrink-0" />
+                <a href={`mailto:${studioBrand.email}`} className="hover:text-white transition-colors truncate">
                   {studioBrand.email}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
-                <MapPin className="w-4 h-4 text-[#C5A880]" />
-                <span>London • Colombo Atelier</span>
+                <Phone className="w-4 h-4 text-[#C5A880] shrink-0" />
+                <a href={`tel:+94777981560`} className="hover:text-white transition-colors">
+                  {studioBrand.phone}
+                </a>
               </div>
             </div>
 

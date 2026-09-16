@@ -115,6 +115,19 @@ export default function Contact() {
 
                 <div>
                   <span className="text-[10px] uppercase tracking-[0.25em] text-[#8E8880] block mb-1 font-sans">
+                    Phone / WhatsApp
+                  </span>
+                  <a
+                    href={`tel:+94777981560`}
+                    className="font-serif text-xl sm:text-2xl text-[#1C1B1A] hover:text-[#C5A880] transition-colors inline-flex items-center gap-2"
+                  >
+                    <Phone className="w-5 h-5 text-[#C5A880]" />
+                    <span>{studioBrand.phone}</span>
+                  </a>
+                </div>
+
+                <div>
+                  <span className="text-[10px] uppercase tracking-[0.25em] text-[#8E8880] block mb-1 font-sans">
                     Consultation Inquiries
                   </span>
                   <p className="text-sm text-[#5A5652] font-light">
